@@ -1,0 +1,7 @@
+{
+  "activations": [
+    "ReLU",
+    "Softplus",
+    "SIREN"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "experiment": "experiment_name",
+  "cd": null,
+  "sym_mfcd": null,
+  "mfcd": null,
+  "f_score": null,
+  "small_fragment_cd": null,
+  "small_fragment_iou": null,
+  "boundary_recall": null,
+  "missing_fragments": null,
+  "components_gt": null,
+  "components_pred": null
+}

@@ -1,0 +1,6 @@
+{
+  "implicit_ffb": "data/ckpts/ffb_mlp",
+  "implicit_udf": "data/ckpts/udf_mlp",
+  "voxel_ffb": "TODO",
+  "voxel_udf": "TODO"
+}

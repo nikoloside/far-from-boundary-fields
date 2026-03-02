@@ -1,0 +1,56 @@
+{
+  "conditions": [
+    [
+      "GS-uniform-L2",
+      "GS-SDF",
+      "uniform",
+      false
+    ],
+    [
+      "GS-NB-L2",
+      "GS-SDF",
+      "near_boundary",
+      false
+    ],
+    [
+      "GS-NB-weighted-L2",
+      "GS-SDF",
+      "near_boundary",
+      true
+    ],
+    [
+      "FFB-uniform-L2",
+      "FFB-DF",
+      "uniform",
+      false
+    ],
+    [
+      "FFB-NB-L2",
+      "FFB-DF",
+      "near_boundary",
+      false
+    ]
+  ],
+  "results": [
+    {
+      "name": "GS-uniform-L2",
+      "rep": "GS-SDF"
+    },
+    {
+      "name": "GS-NB-L2",
+      "rep": "GS-SDF"
+    },
+    {
+      "name": "GS-NB-weighted-L2",
+      "rep": "GS-SDF"
+    },
+    {
+      "name": "FFB-uniform-L2",
+      "rep": "FFB-DF"
+    },
+    {
+      "name": "FFB-NB-L2",
+      "rep": "FFB-DF"
+    }
+  ]
+}
