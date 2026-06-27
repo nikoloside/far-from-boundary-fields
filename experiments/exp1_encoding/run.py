@@ -83,8 +83,11 @@ def _ensure_encoding(encoding_type, shape_ids):
         return
     log(f"  {encoding_type}: encoding {len(missing)} shapes: {missing}")
     script = ENCODER_SCRIPTS[encoding_type]
+    # Match the run mode: MINIMAL/QUICK use a small sample count so a fresh clone
+    # (no precomputed npz) still encodes in seconds/minutes instead of hours.
+    enc_flag = " --minimal" if MINIMAL else (" --fast" if QUICK else "")
     for sid in missing:
-        run_cmd(f"python {script} --shape_id {sid}",
+        run_cmd(f"python {script} --shape_id {sid}{enc_flag}",
                 EXP_ID, f"Encode {encoding_type} shape {sid}")
 
 
