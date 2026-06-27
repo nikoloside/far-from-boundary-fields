@@ -16,5 +16,9 @@ env/
 # Generated experiment artifacts (regenerable, multi-GB) — keep out of git
 experiments/*/output/
 
+# Encoded point samples — regenerated from data/obj/ by the encoders, never committed
+*.npz
+data/npz-*/
+
 # Third-party external method clones (have their own .git) — not our code
 experiments/exp3_external_methods/repos/
