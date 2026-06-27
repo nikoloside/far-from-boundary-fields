@@ -1,6 +1,37 @@
-# FFB-MLP Experiments
+<p align="center">
+  <h2 align="center">Far-From-Boundary Fields for Learning Segmented Implicit Solids</h2>
+  <p align="center">
+    <a href="https://nikoloside.graphics/"><strong>Yuhang Huang</strong></a>
+    ·
+    <a href="https://graphics.c.u-tokyo.ac.jp/hp/en/kanai"><strong>Takashi Kanai</strong></a>
+    <br><b>The University of Tokyo</b><br><br>
+    <a href="https://github.com/nikoloside/far-from-boundary-fields"><img src="https://img.shields.io/badge/Code-FFB-blue" height=22.5></a>
+    <a href="https://colab.research.google.com/github/nikoloside/far-from-boundary-fields/blob/main/notebooks/colab_quickstart.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height=22.5></a>
+    <a href="https://www.replicabilitystamp.org/"><img src="https://img.shields.io/badge/GRSI-pending-lightgrey" height=22.5></a>
+  </p>
+</p>
 
-VQ-MLP framework for fractured solid reconstruction. Compares UDF encoding strategies, training techniques, activation functions, and external SOTA methods.
+Reference implementation and experiments for the SMI 2026 paper *"Far-From-Boundary
+Fields for Learning Segmented Implicit Solids"* — a VQ-MLP framework for fractured solid
+reconstruction that compares UDF encoding strategies, training techniques, activation
+functions, and external SOTA methods.
+
+## Quick test (reproduce a figure)
+
+- **Online (zero setup):** open the Colab notebook
+  [`notebooks/colab_quickstart.ipynb`](notebooks/colab_quickstart.ipynb) via the badge
+  above — it clones the repo, installs dependencies, and runs the minimal pipeline.
+- **Local** (needs [Git LFS](https://git-lfs.com) for the bundled data):
+  ```bash
+  git lfs install
+  git clone https://github.com/nikoloside/far-from-boundary-fields
+  cd far-from-boundary-fields
+  pip install -r requirements.txt
+  python quick_test.py          # minimal smoke run
+  python quick_test.py --quick  # medium run
+  ```
+  Outputs (meshes, metrics, and `symmfcd_comparison.png`) are written under
+  `experiments/exp1_encoding/output/`.
 
 ## Architecture
 
@@ -73,3 +104,34 @@ All experiments produce:
 - `output/figures/symmfcd_comparison.png` — SymMFCD bar chart
 - `output/meshes/*.ply` — extracted meshes
 - `output/voxels/*.gif` + `*.nii` — voxel visualizations
+
+## Data provenance
+
+The solids in `data/obj/` (`1.obj`–`5.obj`) are **samples** bundled for reproduction
+(tracked via Git LFS). The full dataset of fractured solids is produced by the
+brittle-fracture simulation in our DeepFracture / TEBP project and cooked into
+far-from-boundary fields:
+
+- Fracture simulation: [`TEBP-DeepFracture/01.Data-generation`](https://github.com/nikoloside/TEBP-DeepFracture/tree/main/01.Data-generation)
+- FFBDF cooking (the encoding this paper builds on): [`TEBP-DeepFracture/02.CookData/create_input_output.py`](https://github.com/nikoloside/TEBP-DeepFracture/blob/main/02.CookData/create_input_output.py)
+
+## License
+
+Released under the [MIT License](LICENSE) (non-commercial use permitted). All
+dependencies are free for academic / research use.
+
+## Citation
+
+```bibtex
+@inproceedings{huang2026ffb,
+  author    = {Huang, Yuhang and Kanai, Takashi},
+  title     = {Far-From-Boundary Fields for Learning Segmented Implicit Solids},
+  booktitle = {Shape Modeling International (SMI)},
+  year      = {2026}
+}
+```
+
+## Acknowledgements
+
+- Shared fracture data + runtime: [TEBP / DeepFracture](https://github.com/nikoloside/TEBP-DeepFracture).
+- Thanks to the Graphics Replicability Stamp Initiative (GRSI).

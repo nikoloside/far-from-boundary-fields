@@ -5,7 +5,7 @@ tqdm
 scipy
 
 # Mesh processing
-vedo
+vedo==2024.5.1  # pinned: code uses the .points / .cells API of this release
 trimesh
 rtree
 manifold3d
