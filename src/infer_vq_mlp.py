@@ -71,7 +71,9 @@ def extract_mesh_mc(volume, resolution=256, isolevel=0.0, signed=True):
         vol = vd.Volume(volume_mc, spacing=spacing, origin=origin)
         mesh = vol.isosurface(value=level)
         verts = mesh.vertices
+        verts = np.asarray(verts() if callable(verts) else verts)
         faces = mesh.cells
+        faces = np.asarray(faces() if callable(faces) else faces)
         if len(verts) == 0:
             print("Marching cubes: empty result")
             return None, None

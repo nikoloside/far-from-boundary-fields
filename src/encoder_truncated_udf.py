@@ -12,6 +12,12 @@ from tqdm import tqdm
 import vedo
 import argparse
 
+
+def _as_array(x):
+    # vedo exposes .points/.cells as a property in some versions, a method in others
+    return np.array(x() if callable(x) else x)
+
+
 ap = argparse.ArgumentParser()
 ap.add_argument("--fast", action="store_true", help="Use fewer samples (4000) for quick test")
 ap.add_argument("--minimal", action="store_true", help="Minimal: 1500 uniform samples only")
@@ -55,13 +61,13 @@ for path in AB_paths:
         all_faces = []
 
         for obj in objs:
-            vertices = np.array(obj.points)
-            faces = np.array(obj.cells)
+            vertices = _as_array(obj.points).astype(np.float64)
+            faces = _as_array(obj.cells)
             if len(faces.shape) == 1:
                 faces = faces.reshape(-1, 3)
             elif len(faces.shape) == 2 and faces.shape[1] > 3:
                 faces = faces[:, :3]
-            faces = faces.astype(np.int32)
+            faces = faces.astype(np.int64)  # igl requires int64 faces
             all_vertices.append(vertices)
             all_faces.append(faces)
     else:

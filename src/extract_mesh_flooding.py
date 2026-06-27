@@ -684,7 +684,9 @@ def mesh_boolean_with_gt(fragment_meshes, gt_obj_path, work_path):
         try:
             # Convert vedo mesh to trimesh
             verts = vedo_mesh.vertices
+            verts = np.asarray(verts() if callable(verts) else verts)
             faces_raw = vedo_mesh.cells
+            faces_raw = np.asarray(faces_raw() if callable(faces_raw) else faces_raw)
             frag_tri = trimesh.Trimesh(vertices=verts, faces=faces_raw)
 
             # Boolean intersection

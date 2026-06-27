@@ -7,6 +7,12 @@ from tqdm import tqdm
 import vedo
 import argparse
 
+
+def _as_array(x):
+    # vedo exposes .points/.cells as a property in some versions, a method in others
+    return np.array(x() if callable(x) else x)
+
+
 ap = argparse.ArgumentParser()
 ap.add_argument("--fast", action="store_true", help="Use fewer samples (4000) for quick test")
 ap.add_argument("--minimal", action="store_true", help="Minimal run: 1500 uniform samples only (no near-surface)")
@@ -58,10 +64,10 @@ for path in AB_paths:
         
         # Process each object from the split
         for obj in objs:
-            vertices = np.array(obj.points)
-            
+            vertices = _as_array(obj.points).astype(np.float64)
+
             # Use cells instead of faces as suggested by vedo
-            faces = np.array(obj.cells)
+            faces = _as_array(obj.cells)
             
             # Ensure faces are in the correct format for igl (triangles)
             if len(faces.shape) == 1:
@@ -72,8 +78,8 @@ for path in AB_paths:
                 # This is a simple triangulation - for complex cases you might need more sophisticated triangulation
                 faces = faces[:, :3]
             
-            # Ensure faces are in the correct data type for igl
-            faces = faces.astype(np.int32)
+            # Ensure faces are in the correct data type for igl (int64)
+            faces = faces.astype(np.int64)
             
             all_vertices.append(vertices)
             all_faces.append(faces)
