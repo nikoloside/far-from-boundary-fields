@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(du:*)",
+      "Bash(git:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(grep:*)",
+      "Read(//nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/**)",
+      "Bash(done)",
+      "Bash(ls:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(chmod +x:*)",
+      "Bash(chmod:*)",
+      "Bash(do echo:*)",
+      "Bash(for d:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $d ===\")",
+      "Read(//nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/$d/**)",
+      "Bash(ls -la /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/data/npz-udf-uniform/ 2>/dev/null; echo \"EXIT:$?\")",
+      "Bash(python src/encoder_ffb-df_mlp.py --uniform_only --shape_id 2 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_ffb-df_mlp.py --uniform_only --shape_id 3 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_ffb-df_mlp.py --uniform_only --shape_id 4 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_ffb-df_mlp.py --uniform_only --shape_id 5 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_udf_mesh.py --uniform_only --shape_id 1 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_udf_mesh.py --uniform_only --shape_id 2 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_udf_mesh.py --uniform_only --shape_id 3 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_udf_mesh.py --uniform_only --shape_id 4 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(python src/encoder_udf_mesh.py --uniform_only --shape_id 5 2>&1; echo \"EXIT_CODE:$?\")",
+      "Bash(find /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/experiments/exp3_external_methods/repos/CAP-UDF -name \"*.md\" -o -name \"*.txt\" 2>/dev/null | grep -v \".git\")",
+      "Bash(pip install:*)",
+      "Bash(nvidia-smi 2>&1 | head -5; echo \"---\"; python -c \"import torch; print\\(f'CUDA available: {torch.cuda.is_available\\(\\)}, version: {torch.version.cuda}'\\)\" 2>&1)",
+      "Read(//tmp/**)",
+      "Bash(gdown \"1rLog9aX3gcKYF3FCHeL4BHDBHhXoPH3V\" -O weights_examples.7z)",
+      "Bash(cp /tmp/ndc_extract/weights/weights_undc_udf_bool.pth /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/experiments/exp3_external_methods/repos/NDC/weights/ && cp /tmp/ndc_extract/weights/weights_undc_udf_float.pth /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/experiments/exp3_external_methods/repos/NDC/weights/ && ls -la /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/experiments/exp3_external_methods/repos/NDC/weights/)",
+      "Bash(cp /tmp/ndc_extract/examples/bunny.sdf /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/experiments/exp3_external_methods/repos/NDC/examples/ 2>/dev/null; cd /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/experiments/exp3_external_methods/repos/NDC && python main.py --test_input examples/bunny.sdf --input_type udf --method undc --postprocessing --gpu 0 2>&1 | tail -10)",
+      "Bash(find /nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/experiments -type d -name \"*voxels*\" -o -name \"*visualize*\" 2>/dev/null | sort)",
+      "Bash(for exp:*)",
+      "Bash(for dir:*)",
+      "Bash(echo \"=== Experiment ckpt dirs ===\" && find experiments/*/output/ckpts -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort && echo \"=== Data ckpts ===\" && ls -d data/ckpts/*/ 2>/dev/null && echo \"=== NPZ dirs ===\" && ls -d data/npz-*/ 2>/dev/null)"
+    ]
+  }
+}

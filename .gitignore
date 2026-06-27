@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# OS / editor junk
+.DS_Store
+__MACOSX/
+
+# Environments
+.venv/
+venv/
+env/
+
+# Generated experiment artifacts (regenerable, multi-GB) — keep out of git
+experiments/*/output/
+
+# Third-party external method clones (have their own .git) — not our code
+experiments/exp3_external_methods/repos/

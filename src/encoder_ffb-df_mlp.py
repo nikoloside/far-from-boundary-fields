@@ -10,9 +10,18 @@ import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("--fast", action="store_true", help="Use fewer samples (4000) for quick test")
 ap.add_argument("--minimal", action="store_true", help="Minimal run: 1500 uniform samples only (no near-surface)")
+ap.add_argument("--uniform_only", action="store_true",
+                help="Use only uniform sampling (no near-surface enrichment), full sample count")
+ap.add_argument("--threshold", type=float, default=0.3,
+                help="Near-surface threshold for FFBDF mode (default: 0.3)")
+ap.add_argument("--save_path", default=None,
+                help="Override output directory (relative to workspacePath)")
+ap.add_argument("--shape_id", default=None,
+                help="Only encode a specific shape ID (e.g., '1')")
 args = ap.parse_args()
 mlp_sample_num = 1500 if args.minimal else (4000 if args.fast else 64000)
 use_minimal = args.minimal
+use_uniform_only = args.uniform_only
 bool_ffbdf = True  # FFBDF flag
 
 # projName = "squirrel"
@@ -20,13 +29,16 @@ bool_ffbdf = True  # FFBDF flag
 # workspacePath = "/data/data-mlp/" + projectPath
 workspacePath = "data/"
 targetPath = "obj/"
-savePath = "npz-resample/" # "npz-ffbdf"
+savePath = args.save_path if args.save_path else ("npz-resample-uniform/" if use_uniform_only else "npz-resample/")
 
 # 创建保存目录
 os.makedirs(os.path.join(workspacePath, savePath), exist_ok=True)
 
 AB_paths = [x.split('.')[0] for x in glob.glob(workspacePath + 'obj/*.obj')]
 AB_paths = sorted(AB_paths)
+
+if args.shape_id:
+    AB_paths = [p for p in AB_paths if os.path.basename(p) == args.shape_id]
 
 print(AB_paths)
 
@@ -102,106 +114,81 @@ for path in AB_paths:
         all_faces = [faces]
         max_distances = [1]  # Not used in original mode
     
-    pd_sampler = scipy.stats.qmc.PoissonDisk(d=3, radius = 0.025)
-    
-    # 计算需要的点数
-    near_surface_num = int(mlp_sample_num * 0.5)  # 50% 在表面附近
-    uniform_num = mlp_sample_num - near_surface_num
+    # Compute FFB value for a batch of points (multi-fragment normalized SDF)
+    def compute_ffb_values(pts):
+        sdf = np.full(len(pts), np.inf)
+        for obj_v, obj_f, md in zip(all_vertices, all_faces, max_distances):
+            obj_sdf = igl.signed_distance(pts, obj_v, obj_f)[0]
+            inside = obj_sdf < 0
+            obj_sdf[inside] = obj_sdf[inside] / md
+            sdf = np.minimum(sdf, obj_sdf)
+        return sdf
+
+    # Total target count
+    total_enriched = int(mlp_sample_num * 0.5) * 10 + (mlp_sample_num - int(mlp_sample_num * 0.5))
+    # = 352000 for mlp_sample_num=64000
+
     if use_minimal:
-        # Minimal: pure uniform, no near-surface
-        uniform_num = mlp_sample_num
-        near_surface_num = 0
+        # Minimal mode: just uniform random
+        poisson_grid_points = np.random.rand(mlp_sample_num, 3).astype(np.float64) * 2 - 1
+        sdf_values = compute_ffb_values(poisson_grid_points)
+    elif use_uniform_only:
+        # Uniform-only mode: all uniform, same total count
+        poisson_grid_points = np.random.rand(total_enriched, 3).astype(np.float64) * 2 - 1
+        sdf_values = compute_ffb_values(poisson_grid_points)
     else:
-        near_surface_num *= 10
-    
-    # 重复采样直到获得足够的接近表面的点
-    near_surface_points = np.array([]).reshape(0, 3)
-    max_iterations = 20 if use_minimal else 100
-    
-    for iteration in tqdm(range(max_iterations), desc=f"Sampling for {path}", disable=use_minimal):
-        if use_minimal and iteration > 0:
-            break
-        # 在 [-1, 1] 范围内进行采样
-        if use_minimal:
-            coarse_points = np.random.rand(uniform_num, 3).astype(np.float64) * 2 - 1
-        else:
-            coarse_sampler = scipy.stats.qmc.PoissonDisk(d=3, radius=0.025)
-            coarse_points = coarse_sampler.random(near_surface_num * 2)  # 采样更多点
-            coarse_points = 2 * coarse_points - 1
-        
-        if bool_ffbdf:
-            # FFBDF: compute SDF using multiple objects
-            coarse_sdf = np.full(len(coarse_points), np.inf)
-            for i, (obj_vertices, obj_faces, max_dist) in enumerate(zip(all_vertices, all_faces, max_distances)):
-                # Compute signed distance to this object
-                obj_sdf = igl.signed_distance(coarse_points, obj_vertices, obj_faces)[0]
-                
-                # If point is inside this object, normalize by max_dist
-                inside_mask = obj_sdf < 0
-                obj_sdf[inside_mask] = obj_sdf[inside_mask] / max_dist
-                
-                # Take minimum distance across all objects
-                coarse_sdf = np.minimum(coarse_sdf, obj_sdf)
-        else:
-            # Original: single object SDF
-            coarse_sdf = igl.signed_distance(coarse_points, vertices, faces)[0]
-        
-        # 检查 bool_ffbdf 是否为 True
-        if bool_ffbdf:
-            # 筛选出 SDF 值在 [-0.1, 0.1] 附近的点
-            near_surface_mask = np.abs(coarse_sdf) <= 0.3
-        else:
-            # 如果 bool_ffbdf 为 False，使用不同的阈值
-            near_surface_mask = np.abs(coarse_sdf) <= 0.1
-        new_near_surface_points = coarse_points[near_surface_mask]
-        
-        # 添加到已有的点中
-        near_surface_points = np.vstack([near_surface_points, new_near_surface_points]) if len(near_surface_points) > 0 else new_near_surface_points
-        
-        # 如果已经获得足够的点，跳出循环
-        if use_minimal:
-            near_surface_selected = coarse_points  # use all uniform points
-            break
-        if len(near_surface_points) >= near_surface_num:
-            break
-    
-    # 从接近表面的点中随机选择需要的数量
-    if not use_minimal:
-        if len(near_surface_points) >= near_surface_num:
-            indices = np.random.choice(len(near_surface_points), near_surface_num, replace=False)
-            near_surface_selected = near_surface_points[indices]
-        else:
-            near_surface_selected = near_surface_points
-            print(f"Warning: Only found {len(near_surface_points)} points near surface, less than requested {near_surface_num}")
-    
-    # 重新采样均匀分布的点
-    if use_minimal:
-        uniform_points = np.array([]).reshape(0, 3)
-    else:
-        uniform_sampler = scipy.stats.qmc.PoissonDisk(d=3, radius=0.025)
-        uniform_points = uniform_sampler.random(uniform_num)
-    if len(uniform_points) > 0:
-        uniform_points = 2 * uniform_points - 1
-    
-    # 合并两种采样点
-    poisson_grid_points = np.vstack([near_surface_selected, uniform_points]) if len(uniform_points) > 0 else near_surface_selected
-    
-    if bool_ffbdf:
-        # FFBDF: compute final SDF using multiple objects
-        sdf_values = np.full(len(poisson_grid_points), np.inf)
-        for i, (obj_vertices, obj_faces, max_dist) in enumerate(zip(all_vertices, all_faces, max_distances)):
-            # Compute signed distance to this object
-            obj_sdf = igl.signed_distance(poisson_grid_points, obj_vertices, obj_faces)[0]
-            
-            # If point is inside this object, normalize by max_dist
-            inside_mask = obj_sdf < 0
-            obj_sdf[inside_mask] = obj_sdf[inside_mask] / max_dist
-            
-            # Take minimum distance across all objects
-            sdf_values = np.minimum(sdf_values, obj_sdf)
-    else:
-        # Original: single object SDF
-        sdf_values = igl.signed_distance(poisson_grid_points, vertices, faces)[0]
+        # Stratified value-based sampling:
+        #   Phase 1: collect points with value in [-0.2, 0.2] → 70% of total
+        #   Phase 2: collect points with value outside [-0.2, 0.2] → 30% of total
+        # Points rejected in phase 1 (outside [-0.2, 0.2]) are kept for phase 2.
+        near_target = int(total_enriched * 0.7)   # 70% near-surface
+        far_target = total_enriched - near_target  # 30% deep + far
+
+        near_pts = np.array([]).reshape(0, 3)
+        near_vals = np.array([])
+        far_pts = np.array([]).reshape(0, 3)
+        far_vals = np.array([])
+
+        batch_size_sample = 100000  # points per sampling iteration
+        max_iterations = 200
+
+        for iteration in tqdm(range(max_iterations), desc=f"Stratified sampling for {path}"):
+            # Sample batch
+            sampler = scipy.stats.qmc.PoissonDisk(d=3, radius=0.025)
+            pts = sampler.random(batch_size_sample)
+            pts = 2 * pts - 1
+
+            # Compute FFB values
+            vals = compute_ffb_values(pts)
+
+            # Bin by value range
+            near_mask = (vals >= -0.2) & (vals <= 0.2)
+            far_mask = ~near_mask
+
+            if near_mask.any():
+                near_pts = np.vstack([near_pts, pts[near_mask]]) if len(near_pts) > 0 else pts[near_mask]
+                near_vals = np.concatenate([near_vals, vals[near_mask]])
+            if far_mask.any():
+                far_pts = np.vstack([far_pts, pts[far_mask]]) if len(far_pts) > 0 else pts[far_mask]
+                far_vals = np.concatenate([far_vals, vals[far_mask]])
+
+            # Check if both bins are full
+            if len(near_pts) >= near_target and len(far_pts) >= far_target:
+                break
+
+        # Subsample each bin to target
+        if len(near_pts) > near_target:
+            idx = np.random.choice(len(near_pts), near_target, replace=False)
+            near_pts, near_vals = near_pts[idx], near_vals[idx]
+        if len(far_pts) > far_target:
+            idx = np.random.choice(len(far_pts), far_target, replace=False)
+            far_pts, far_vals = far_pts[idx], far_vals[idx]
+
+        poisson_grid_points = np.vstack([near_pts, far_pts])
+        sdf_values = np.concatenate([near_vals, far_vals])
+
+        print(f"Stratified: near[-0.2,0.2]={len(near_pts)}, far={len(far_pts)}, total={len(poisson_grid_points)}")
+        print(f"  Value range: [{sdf_values.min():.4f}, {sdf_values.max():.4f}]")
 
     npyName = os.path.join(workspacePath, savePath + str(expTime) + ".npz")
 

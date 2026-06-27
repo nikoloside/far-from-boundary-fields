@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(du:*)",
+      "Bash(git:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(grep:*)",
+      "Read(//nashome/yhuang/yhuang/Workspace/ffb-mlp-experiments/**)",
+      "Bash(done)",
+      "Bash(ls:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(chmod +x:*)",
+      "Bash(chmod:*)",
+      "Bash(do echo:*)"
+    ]
+  }
+}

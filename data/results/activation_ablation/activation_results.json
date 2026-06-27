@@ -1,7 +1,21 @@
 {
   "activations": [
-    "ReLU",
-    "Softplus",
-    "SIREN"
+    "relu",
+    "softplus",
+    "siren"
+  ],
+  "results": [
+    {
+      "activation": "relu",
+      "epochs": 15
+    },
+    {
+      "activation": "softplus",
+      "epochs": 15
+    },
+    {
+      "activation": "siren",
+      "epochs": 15
+    }
   ]
 }

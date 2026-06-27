@@ -1,0 +1,32 @@
+# Core
+numpy
+torch
+tqdm
+scipy
+
+# Mesh processing
+vedo
+trimesh
+rtree
+manifold3d
+libigl
+
+# Volume / medical imaging
+nibabel
+
+# Visualization
+matplotlib
+Pillow
+
+# Neural network
+siren-pytorch
+
+# Encoder (Poisson disk sampling)
+# scipy.stats.qmc (included in scipy)
+
+# ImageJ watershed (pyimagej + Java)
+pyimagej
+
+# Experiment evaluation
+# scipy.optimize.linear_sum_assignment (included in scipy)
+# scipy.spatial.cKDTree (included in scipy)

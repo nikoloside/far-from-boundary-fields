@@ -4,53 +4,63 @@
       "GS-uniform-L2",
       "GS-SDF",
       "uniform",
-      false
+      "mse"
     ],
     [
       "GS-NB-L2",
       "GS-SDF",
       "near_boundary",
-      false
+      "mse"
     ],
     [
       "GS-NB-weighted-L2",
       "GS-SDF",
       "near_boundary",
-      true
+      "weighted_mse"
     ],
     [
       "FFB-uniform-L2",
       "FFB-DF",
       "uniform",
-      false
+      "mse"
     ],
     [
       "FFB-NB-L2",
       "FFB-DF",
       "near_boundary",
-      false
+      "mse"
     ]
   ],
   "results": [
     {
       "name": "GS-uniform-L2",
-      "rep": "GS-SDF"
+      "rep": "GS-SDF",
+      "sampling": "uniform",
+      "loss_type": "mse"
     },
     {
       "name": "GS-NB-L2",
-      "rep": "GS-SDF"
+      "rep": "GS-SDF",
+      "sampling": "near_boundary",
+      "loss_type": "mse"
     },
     {
       "name": "GS-NB-weighted-L2",
-      "rep": "GS-SDF"
+      "rep": "GS-SDF",
+      "sampling": "near_boundary",
+      "loss_type": "weighted_mse"
     },
     {
       "name": "FFB-uniform-L2",
-      "rep": "FFB-DF"
+      "rep": "FFB-DF",
+      "sampling": "uniform",
+      "loss_type": "mse"
     },
     {
       "name": "FFB-NB-L2",
-      "rep": "FFB-DF"
+      "rep": "FFB-DF",
+      "sampling": "near_boundary",
+      "loss_type": "mse"
     }
   ]
 }

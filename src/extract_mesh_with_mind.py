@@ -23,9 +23,20 @@ import torch
 import torch.nn as nn
 import trimesh
 
-# Add MIND to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../experiments/udf_baseline/MIND/src'))
-from mind import MIND
+# Add MIND to path (try both old and new experiment directory names)
+_mind_paths = [
+    os.path.join(os.path.dirname(__file__), '../experiments/exp1_udf_baseline/MIND/src'),
+    os.path.join(os.path.dirname(__file__), '../experiments/udf_baseline/MIND/src'),
+]
+for _p in _mind_paths:
+    if os.path.isdir(_p):
+        sys.path.insert(0, _p)
+        break
+try:
+    from mind import MIND
+except ImportError:
+    MIND = None
+    print("WARNING: MIND module not available. MIND extraction will be skipped.")
 
 
 # ========== Model Definitions ==========
@@ -78,32 +89,41 @@ def get_embedder(multires, input_dims=3):
     return embed, embedder_obj.out_dim
 
 
-class SimpleMLPUDF(nn.Module):
-    """Simple MLP for UDF (4 layers, 128 dim)."""
-    def __init__(self, d_hidden=128, n_layers=4, multires=4):
+class SimpleMLPSDF(nn.Module):
+    """SDF MLP for FFB-DF (matches SimpleSDFMLP in train_ffb_mlp.py)."""
+    def __init__(self, d_in=3, d_hidden=128, n_layers=4, multires=4):
         super().__init__()
-        self.multires = multires
-
-        if multires > 0:
-            self.embed_fn, d_in = get_embedder(multires, input_dims=3)
-        else:
-            self.embed_fn = None
-            d_in = 3
-
-        layers = []
-        layers.append(nn.Linear(d_in, d_hidden))
-        layers.append(nn.ReLU())
-        for _ in range(n_layers - 2):
-            layers.append(nn.Linear(d_hidden, d_hidden))
-            layers.append(nn.ReLU())
-        layers.append(nn.Linear(d_hidden, 1))
-
-        self.net = nn.Sequential(*layers)
+        self.embed_fn, embed_dim = get_embedder(multires, input_dims=d_in)
+        dims = [embed_dim] + [d_hidden] * (n_layers - 1) + [1]
+        self.layers = nn.ModuleList([nn.Linear(dims[i], dims[i + 1]) for i in range(len(dims) - 1)])
+        self.activation = nn.Softplus(beta=100)
+        self.scale = 1.0
 
     def forward(self, x):
-        if self.embed_fn is not None:
-            x = self.embed_fn(x)
-        return self.net(x)
+        x = x * self.scale
+        x = self.embed_fn(x)
+        for i, lin in enumerate(self.layers[:-1]):
+            x = self.activation(lin(x))
+        return self.layers[-1](x) / self.scale
+
+
+class SimpleMLPUDF(nn.Module):
+    """UDF MLP (matches SimpleUDFMLP in train_udf_mlp.py)."""
+    def __init__(self, d_in=3, d_hidden=128, n_layers=4, multires=4):
+        super().__init__()
+        self.embed_fn, embed_dim = get_embedder(multires, input_dims=d_in)
+        dims = [embed_dim] + [d_hidden] * (n_layers - 1) + [1]
+        self.layers = nn.ModuleList([nn.Linear(dims[i], dims[i + 1]) for i in range(len(dims) - 1)])
+        self.activation = nn.Softplus(beta=100)
+        self.scale = 1.0
+
+    def forward(self, x):
+        x = x * self.scale
+        x = self.embed_fn(x)
+        for i, lin in enumerate(self.layers[:-1]):
+            x = self.activation(lin(x))
+        x = self.layers[-1](x)
+        return torch.abs(x) / self.scale
 
 
 class NeuralUDFNetwork(nn.Module):
@@ -205,11 +225,9 @@ def load_model(model_type, ckpt_path, device):
     ckpt = torch.load(ckpt_path, map_location=device)
 
     if model_type == 'udf_mlp':
-        # Simple UDF MLP (4 layers, 128 dim)
         model = SimpleMLPUDF(d_hidden=128, n_layers=4, multires=4)
     elif model_type == 'ffb_mlp':
-        # FFB MLP (same architecture as UDF MLP)
-        model = SimpleMLPUDF(d_hidden=128, n_layers=4, multires=4)
+        model = SimpleMLPSDF(d_hidden=128, n_layers=4, multires=4)
     elif model_type == 'neuraludf_mlp':
         # NeuralUDF (6 layers, 256 dim, skip connections)
         if 'args' in ckpt:
@@ -241,7 +259,10 @@ def load_model(model_type, ckpt_path, device):
     else:
         raise ValueError(f"Unknown model type: {model_type}")
 
-    model.load_state_dict(ckpt['model_state_dict'])
+    if isinstance(ckpt, dict) and 'model_state_dict' in ckpt:
+        model.load_state_dict(ckpt['model_state_dict'])
+    else:
+        model.load_state_dict(ckpt)
     model.to(device)
     model.eval()
 
@@ -297,6 +318,12 @@ def extract_mesh_with_mind(args):
     print(f"  Learning rate: {args.learning_rate}")
     print(f"  Bounds: [{args.bound_min}, {args.bound_max}]")
     print("="*60 + "\n")
+
+    if MIND is None:
+        print("ERROR: MIND module not available. Cannot proceed.")
+        print("Make sure the NeuralUDF submodule is properly initialized:")
+        print("  git submodule update --init --recursive")
+        sys.exit(1)
 
     mind = MIND(
         query_func=query_func,
