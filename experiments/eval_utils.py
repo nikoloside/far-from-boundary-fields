@@ -383,7 +383,7 @@ def render_mesh_comparison(mesh_paths, labels, output_path, title="Mesh Comparis
         ax = fig.add_subplot(1, n, i + 1, projection='3d')
         ax.set_title(label, fontsize=11)
 
-        if mesh is None:
+        if mesh is None or len(mesh.vertices) == 0 or len(mesh.faces) == 0:
             ax.text2D(0.5, 0.5, "N/A", transform=ax.transAxes,
                       fontsize=20, ha='center', va='center', color='gray')
         else:

@@ -351,14 +351,18 @@ def main():
                 os.path.join(OUT_DIR, "figures", f"symmfcd_shape_{sid}.png"),
                 title=f"SymMFCD: Shape {sid}")
 
-    # Mesh comparison per shape (flooding results)
+    # Mesh comparison per shape (flooding results) — never let visualization
+    # failures (e.g. empty meshes from an undertrained smoke run) kill the run.
     for sid in shape_ids:
         paths = [os.path.join(OUT_DIR, "flooding", f"{et}_{sid}.obj")
                  for et in encoding_types]
-        render_mesh_comparison(
-            paths, encoding_types,
-            os.path.join(OUT_DIR, "figures", f"mesh_comparison_{sid}.png"),
-            title=f"Mesh Comparison: Shape {sid}")
+        try:
+            render_mesh_comparison(
+                paths, encoding_types,
+                os.path.join(OUT_DIR, "figures", f"mesh_comparison_{sid}.png"),
+                title=f"Mesh Comparison: Shape {sid}")
+        except Exception as e:
+            log(f"  Mesh comparison for shape {sid} skipped: {e}")
 
     # === SUMMARY ===
     log(f"\n=== {EXP_ID} SUMMARY ===")
