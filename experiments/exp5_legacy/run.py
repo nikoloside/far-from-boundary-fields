@@ -2,7 +2,7 @@
 """
 Exp5: Legacy Method MFCD Comparison
 
-Compare all methods in exp5_legacy/legecy/*.obj against:
+Compare all methods in exp5_legacy/legacy/*.obj against:
     exp5_legacy/squirrel-gt.obj
 
 Outputs:
@@ -44,8 +44,8 @@ except Exception as e:
     ) from e
 
 EXP_ID = "exp5_legacy"
-LEGACY_DIR = os.path.join(_exp_dir, "legecy")
-ALT_LEGACY_DIR = os.path.join(_exp_dir, "legacy")
+LEGACY_DIR = os.path.join(_exp_dir, "legacy")
+ALT_LEGACY_DIR = os.path.join(_exp_dir, "legecy")  # legacy fallback for the old typo'd dir
 GT_OBJ = os.path.join(_exp_dir, "squirrel-gt.obj")
 OUT_DIR = os.path.join(_exp_dir, "output")
 METRICS_DIR = os.path.join(OUT_DIR, "metrics")
