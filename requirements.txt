@@ -8,6 +8,7 @@ scipy
 vedo==2024.5.1  # pinned: code uses the .points / .cells API of this release
 trimesh
 rtree
+embreex      # fast, memory-bounded point-in-mesh test for trimesh (SymMFCD volume sampling)
 manifold3d
 libigl
 
