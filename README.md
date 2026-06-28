@@ -5,6 +5,7 @@
     ·
     <a href="https://graphics.c.u-tokyo.ac.jp/hp/en/kanai"><strong>Takashi Kanai</strong></a>
     <br><b>The University of Tokyo</b><br><br>
+    <a href="https://www.sciencedirect.com/science/article/pii/S0097849326001196"><img src="https://img.shields.io/badge/Paper-C&G-red" height=22.5></a>
     <a href="https://github.com/nikoloside/far-from-boundary-fields"><img src="https://img.shields.io/badge/Code-FFB-blue" height=22.5></a>
     <a href="https://colab.research.google.com/github/nikoloside/far-from-boundary-fields/blob/main/notebooks/colab_quickstart.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height=22.5></a>
     <a href="https://www.replicabilitystamp.org/"><img src="https://img.shields.io/badge/GRSI-pending-lightgrey" height=22.5></a>
