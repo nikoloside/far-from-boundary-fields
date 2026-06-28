@@ -20,18 +20,31 @@ functions, and external SOTA methods.
 
 - **Online (zero setup):** open the Colab notebook
   [`notebooks/colab_quickstart.ipynb`](notebooks/colab_quickstart.ipynb) via the badge
-  above — it clones the repo, installs dependencies, and runs the minimal pipeline.
+  above — it clones the repo, installs dependencies (incl. ImageJ), and runs the pipeline.
 - **Local** (needs [Git LFS](https://git-lfs.com) for the bundled data):
   ```bash
   git lfs install
   git clone https://github.com/nikoloside/far-from-boundary-fields
   cd far-from-boundary-fields
   pip install -r requirements.txt
-  python quick_test.py          # minimal smoke run
-  python quick_test.py --quick  # medium run
+  python quick_test.py          # smoke test: 2 epochs / 1 shape (just checks it runs)
+  python quick_test.py --quick  # produces a real symmfcd_comparison.png (minutes on GPU)
   ```
   Outputs (meshes, metrics, and `symmfcd_comparison.png`) are written under
   `experiments/exp1_encoding/output/`.
+
+### ImageJ (watershed segmentation)
+
+The paper's reconstruction segments the implicit field into fragments with an ImageJ
+3D watershed (`pyimagej` + a JDK). This is **required to reproduce the paper's exact
+numbers**; without it the pipeline falls back to direct marching cubes (still produces a
+figure, but not the watershed result). On Debian/Ubuntu/Colab:
+```bash
+apt-get install -y openjdk-11-jdk maven
+pip install pyimagej          # already in requirements.txt
+```
+The first run downloads Fiji (a few hundred MB). The full publication-scale result is
+`python experiments/exp1_encoding/run.py` (no flag).
 
 ## Architecture
 
