@@ -137,11 +137,15 @@ dependencies are free for academic / research use.
 ## Citation
 
 ```bibtex
-@inproceedings{huang2026ffb,
-  author    = {Huang, Yuhang and Kanai, Takashi},
-  title     = {Far-From-Boundary Fields for Learning Segmented Implicit Solids},
-  booktitle = {Shape Modeling International (SMI)},
-  year      = {2026}
+@article{huang2026ffb,
+  author  = {Huang, Yuhang and Kanai, Takashi},
+  title   = {Far-From-Boundary Fields for Learning Segmented Implicit Solids},
+  journal = {Computers \& Graphics},
+  volume  = {138},
+  pages   = {104648},
+  year    = {2026},
+  doi     = {10.1016/j.cag.2026.104648},
+  note    = {Special Issue of Shape Modeling International (SMI 2026)}
 }
 ```
 
