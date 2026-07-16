@@ -23,4 +23,30 @@ $(document).ready(function() {
 
     bulmaSlider.attach();
 
+    // Before/after comparison slider
+    var baSlider = document.getElementById('ba-slider');
+    if (baSlider) {
+      var baBefore = document.getElementById('ba-before');
+      var baLine = document.getElementById('ba-line');
+      var dragging = false;
+      var setPos = function(clientX) {
+        var rect = baSlider.getBoundingClientRect();
+        var p = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        var clip = 'inset(0 ' + ((1 - p) * 100) + '% 0 0)';
+        baBefore.style.clipPath = clip;
+        baBefore.style.webkitClipPath = clip;
+        baLine.style.left = (p * 100) + '%';
+      };
+      baSlider.addEventListener('pointerdown', function(e) {
+        dragging = true;
+        baSlider.setPointerCapture(e.pointerId);
+        setPos(e.clientX);
+      });
+      baSlider.addEventListener('pointermove', function(e) {
+        if (dragging) setPos(e.clientX);
+      });
+      baSlider.addEventListener('pointerup', function() { dragging = false; });
+      baSlider.addEventListener('pointercancel', function() { dragging = false; });
+    }
+
 })

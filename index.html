@@ -137,6 +137,16 @@
                   <span>Colab</span>
                   </a>
               </span>
+              <!-- Replicability Stamp Link. -->
+              <span class="link-block">
+                <a href="https://www.replicabilitystamp.org#https-github-com-nikoloside-far-from-boundary-fields"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-award"></i>
+                  </span>
+                  <span>Replicability Stamp</span>
+                  </a>
+              </span>
             </div>
 
           </div>
@@ -149,10 +159,18 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <img id="teaser" height="100%" src="./static/images/teaser.png">
-      </img>
-      <h2 class="subtitle has-text-centered">
-        We introduce Far-From-Boundary Fields (FFBFs), a boundary-aware scalar field representation for segmented implicit solids. Compared with globally-signed distance fields (GS-SDF, top), the FFBF reparameterization (bottom) yields a more balanced implicit field in which fragment-wise boundaries are easier to learn, enabling faithful recovery of small fragments through watershed segmentation.
+      <div id="ba-slider" style="position: relative; max-width: 480px; margin: 0 auto; touch-action: none; cursor: ew-resize; user-select: none; -webkit-user-select: none; border-radius: 10px; overflow: hidden;">
+        <img src="./static/images/after-ffbf.png" style="display: block; width: 100%;" draggable="false">
+        <img id="ba-before" src="./static/images/before-gssdf.png" draggable="false"
+             style="position: absolute; top: 0; left: 0; width: 100%; clip-path: inset(0 50% 0 0); -webkit-clip-path: inset(0 50% 0 0);">
+        <div id="ba-line" style="position: absolute; top: 0; left: 50%; width: 3px; height: 100%; background: #363636; transform: translateX(-50%); pointer-events: none;">
+          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; border-radius: 50%; background: #363636; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px;">&#8644;</div>
+        </div>
+        <span style="position: absolute; top: 10px; left: 10px; background: rgba(54,54,54,0.75); color: #fff; padding: 2px 10px; border-radius: 6px; font-size: 0.85rem; pointer-events: none;">Before &middot; GS-SDF</span>
+        <span style="position: absolute; top: 10px; right: 10px; background: rgba(54,54,54,0.75); color: #fff; padding: 2px 10px; border-radius: 6px; font-size: 0.85rem; pointer-events: none;">After &middot; FFBF (Ours)</span>
+      </div>
+      <h2 class="subtitle has-text-centered" style="margin-top: 1.5rem;">
+        We introduce Far-From-Boundary Fields (FFBFs), a boundary-aware scalar field representation for segmented implicit solids. Drag the slider to compare reconstructions: a globally-signed distance field (GS-SDF, before) loses small fragments, while the FFBF reparameterization (after) yields a more balanced implicit field in which fragment-wise boundaries are easier to learn, enabling faithful recovery of small fragments through watershed segmentation.
       </h2>
     </div>
   </div>
@@ -188,7 +206,7 @@
     <div class="columns is-centered has-text-centered" id="demo-video">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Video</h2>
-        <video controls muted playsinline preload="metadata" style="width: 100%; border-radius: 10px;">
+        <video autoplay controls muted loop playsinline style="width: 100%; border-radius: 10px;">
           <source src="./static/videos/demo.mp4" type="video/mp4">
         </video>
       </div>
@@ -203,6 +221,7 @@
           <p>
             The reference implementation, bundled sample data, and all four experiments (encoding comparison, training-trick ablation, external SOTA comparison, and activation ablation) are available in our <a href="https://github.com/nikoloside/far-from-boundary-fields">GitHub repository</a>.
             A zero-setup <a href="https://colab.research.google.com/github/nikoloside/far-from-boundary-fields/blob/main/notebooks/colab_quickstart.ipynb">Colab notebook</a> reproduces a paper figure end-to-end in minutes.
+            This work has been awarded the <a href="https://www.replicabilitystamp.org#https-github-com-nikoloside-far-from-boundary-fields">Graphics Replicability Stamp (GRSI)</a>.
           </p>
         </div>
       </div>
