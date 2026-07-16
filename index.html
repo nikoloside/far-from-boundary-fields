@@ -159,7 +159,7 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <div id="ba-slider" style="position: relative; max-width: 480px; margin: 0 auto; touch-action: none; cursor: ew-resize; user-select: none; -webkit-user-select: none; border-radius: 10px; overflow: hidden;">
+      <div id="ba-slider" style="position: relative; max-width: 100%; margin: 0 auto; touch-action: none; cursor: ew-resize; user-select: none; -webkit-user-select: none; border-radius: 10px; overflow: hidden;">
         <img src="./static/images/after-ffbf.png" style="display: block; width: 100%;" draggable="false">
         <img id="ba-before" src="./static/images/before-gssdf.png" draggable="false"
              style="position: absolute; top: 0; left: 0; width: 100%; clip-path: inset(0 50% 0 0); -webkit-clip-path: inset(0 50% 0 0);">
@@ -170,7 +170,7 @@
         <span style="position: absolute; top: 10px; right: 10px; background: rgba(54,54,54,0.75); color: #fff; padding: 2px 10px; border-radius: 6px; font-size: 0.85rem; pointer-events: none;">After &middot; FFBF (Ours)</span>
       </div>
       <h2 class="subtitle has-text-centered" style="margin-top: 1.5rem;">
-        We introduce Far-From-Boundary Fields (FFBFs), a boundary-aware scalar field representation for segmented implicit solids. Drag the slider to compare reconstructions: a globally-signed distance field (GS-SDF, before) loses small fragments, while the FFBF reparameterization (after) yields a more balanced implicit field in which fragment-wise boundaries are easier to learn, enabling faithful recovery of small fragments through watershed segmentation.
+        We introduce Far-From-Boundary Fields (FFBFs), a boundary-aware scalar field representation for segmented implicit solids. Drag the slider to compare the two pipelines: learning on a globally-signed distance field (GS-SDF, before) loses small fragments, while the FFBF reparameterization (after) yields a more balanced implicit field in which fragment-wise boundaries are easier to learn, enabling faithful recovery of small fragments through watershed segmentation.
       </h2>
     </div>
   </div>
