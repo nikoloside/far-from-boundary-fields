@@ -9,7 +9,7 @@
     <a href="https://github.com/nikoloside/far-from-boundary-fields"><img src="https://img.shields.io/badge/Code-FFB-blue" height=22.5></a>
     <a href="https://colab.research.google.com/github/nikoloside/far-from-boundary-fields/blob/main/notebooks/colab_quickstart.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height=22.5></a>
     <a href="https://www.replicabilitystamp.org#https-github-com-nikoloside-far-from-boundary-fields"><img src="https://img.shields.io/badge/GRSI-Replicability%20Stamp-brightgreen" height=22.5></a>
-    <a href="https://colab.research.google.com/github/nikoloside/TEBP-DeepFracture/blob/main/05.Colab-Runtime/deepfracture_runtime.ipynb"><img src="https://img.shields.io/badge/Runtime-Web_Demo-orange" height=22.5></a>
+    <a href="https://nikoloside.graphics/deepfracture-live/"><img src="https://img.shields.io/badge/Runtime-Live_Web_Demo-e0574f" height=22.5></a>
   </p>
 </p>
 
